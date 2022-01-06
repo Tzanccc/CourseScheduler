@@ -37,26 +37,6 @@ public class Schedule {
     }
 
     public static ArrayList<Schedule> generateSchedule(ArrayList<Course> courses, ArrayList<Course> priority) {
-        /*
-        permutationsImpl(collections, res, 0, new LinkedList<T>());
-
-        private static <T> void permutationsImpl(List<Collection<T>> ori, Collection<List<T>> res, int d, List<T> current) {
-            // if depth equals number of original collections, final reached, add and return
-            if (d == ori.size()) {
-                res.add(current);
-                return;
-            }
-
-            // iterate from current collection and copy 'current' element N times, one for each element
-            Collection<T> currentCollection = ori.get(d);
-            for (T element : currentCollection) {
-                List<T> copy = Lists.newLinkedList(current);
-                // need to check for conflicts here, continue if conflict detected
-                copy.add(element);
-                permutationsImpl(ori, res, d + 1, copy);
-            }
-        }
-         */
         ArrayList<Schedule> generatedSchedule = new ArrayList<>();
 
         // To implement priorities (free time), build a schedule containing the priorities and use that as the 4th parameter
