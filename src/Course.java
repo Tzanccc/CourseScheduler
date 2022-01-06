@@ -1,12 +1,27 @@
 import java.util.ArrayList;
 
 public class Course {
-    private String code;
-    private ArrayList<Section> sections;
-    private boolean isPriority;
+    protected String code;
+    protected ArrayList<Section> sections;
+    protected boolean isPriority;
 
-    public Course(String code) {
+    public Course () {
+        code = new String();
+        sections = new ArrayList<>();
+        isPriority = false;
+    }
+
+    public Course(String code, boolean isPriority) {
         this.code = code;
+        sections = new ArrayList<>();
+        this.isPriority = isPriority;
+    }
+
+    public Course(Course course, Section section) {
+        this.code = course.code;
+        this.sections = new ArrayList<>();
+        this.sections.add(section);
+        this.isPriority = course.isPriority();
     }
 
     public String getCode() {
@@ -19,6 +34,14 @@ public class Course {
 
     public ArrayList<Section> getSections() {
         return sections;
+    }
+
+    public Section getSections(int i) {
+        return sections.get(i);
+    }
+
+    public int getSectionsLength() {
+        return sections.size();
     }
 
     public void setSections(ArrayList<Section> sections) {
@@ -35,5 +58,14 @@ public class Course {
 
     public void setPriority(boolean isPriority) {
         this.isPriority = isPriority;
+    }
+
+    public String toString() {
+        String s = code + "\n-----\n";
+        for (Section section : sections) {
+            s += section.toString();
+        }
+        s += "-----\n";
+        return s;
     }
 }
