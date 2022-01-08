@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class Schedule {
     private ArrayList<Course> courses;
@@ -43,42 +42,46 @@ public class Schedule {
 
     public static ArrayList<Schedule> generateSchedule(ArrayList<Course> courses, ArrayList<Course> priority) {
         ArrayList<Schedule> generatedSchedule = new ArrayList<>();
-        // To implement priorities (breaks), build a schedule containing the priorities and use that as the 4th parameter
+        // To implement priorities (breaks), schedules are built upon the list of priority courses and sections
         generateScheduleHelper(generatedSchedule, courses, 0, new Schedule(priority));
         return generatedSchedule;
     }
 
+    // The function makes an important assumption that none of the elements are null, and all courses have at least one section
     private static void generateScheduleHelper(ArrayList<Schedule> schedules, ArrayList<Course> courses, int depth, Schedule workingSchedule) {
-        // The function makes an important assumption that none of the elements are null, and all courses have at least one section
+        // All courses have been iterated through, add workingSchedule to list of schedules
         if (depth == courses.size()) {
             schedules.add(workingSchedule);
             return;
         }
 
+        // Iterating through list of courses
         Course currCourse = courses.get(depth);
+        // Iterating through sections of courses
         for (int i = 0; i < currCourse.getSectionsLength(); i++) {
-            /*
-            Dependency check behaviour:
-            If main section fails: don't add any dependency sections, skip to next section
-            If single dependency section fails: skip to next dependency section
-            If all dependency sections fail: don't add main section, skip to next main section
-             */
+            // Check for conflicts with existing sections in workingSchedule
             if (!Schedule.hasConflict(currCourse.getSections(i), workingSchedule)) continue;
+            // If section has dependencies, run helper method to handle dependencies
             if (currCourse.getSections(i).hasDependencies()) {
                 generateScheduleHelper(schedules, courses, depth, workingSchedule, currCourse.getSections(i), currCourse.getSections(i).getDependencies());
             } else {
                 Schedule copySchedule = new Schedule(workingSchedule);
                 copySchedule.addCourse(new Course(currCourse, currCourse.getSections(i), null));
+                // Recursive call with incremented depth
                 generateScheduleHelper(schedules, courses, depth + 1, copySchedule);
             }
         }
     }
 
+    // Helper method to handle section dependencies
     private static void generateScheduleHelper(ArrayList<Schedule> schedules, ArrayList<Course> courses, int depth, Schedule workingSchedule, Section currSection, ArrayList<Section> dependencies) {
+        // Iterates through dependencies
         for (Section dependency : dependencies) {
             Schedule copySchedule = new Schedule(workingSchedule);
+            // Checks dependency sections for conflicts
             if (!Schedule.hasConflict(dependency, workingSchedule)) continue;
             copySchedule.addCourse(new Course(currSection.getCourse(), currSection, dependency));
+            // Recursive call to the main method with incremented depth
             generateScheduleHelper(schedules, courses, depth + 1, copySchedule);
         }
     }
