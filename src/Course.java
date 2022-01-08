@@ -17,10 +17,9 @@ public class Course {
         this.isPriority = isPriority;
     }
 
-    public Course(Course course, Section section) {
+    public Course(Course course, ArrayList<Section> sections) {
         this.code = course.code;
-        this.sections = new ArrayList<>();
-        this.sections.add(section);
+        this.sections = new ArrayList<>(sections);
         this.isPriority = course.isPriority();
     }
 

@@ -1,14 +1,19 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Schedule {
     private ArrayList<Course> courses;
 
     public Schedule() {
-        courses = new ArrayList<>();
+        this.courses = new ArrayList<>();
+    }
+
+    public Schedule(ArrayList<Course> courses) {
+        this.courses = new ArrayList<>(courses);
     }
 
     public Schedule(Schedule schedule) {
-        this.courses = schedule.getCourses();
+        this.courses = new ArrayList<>(schedule.getCourses());
     }
 
     public ArrayList<Course> getCourses() {
@@ -38,10 +43,8 @@ public class Schedule {
 
     public static ArrayList<Schedule> generateSchedule(ArrayList<Course> courses, ArrayList<Course> priority) {
         ArrayList<Schedule> generatedSchedule = new ArrayList<>();
-
         // To implement priorities (free time), build a schedule containing the priorities and use that as the 4th parameter
-        generateScheduleHelper(generatedSchedule, courses, 0, new Schedule());
-
+        generateScheduleHelper(generatedSchedule, courses, 0, new Schedule(priority));
         return generatedSchedule;
     }
 
@@ -52,22 +55,57 @@ public class Schedule {
         }
 
         Course currCourse = courses.get(depth);
+        outerLoop:
         for (int i = 0; i < currCourse.getSectionsLength(); i++) {
             Schedule copySchedule = new Schedule(workingSchedule);
-            // Dependency check goes here
-            if (currCourse.getSections(i).hasDependencies()) generateScheduleHelper(currCourse.getSections(i).getDependencies(), copySchedule);
+            /*
+            Dependency check behaviour:
+            If main section fails: don't add any dependency sections, skip to next section
+            If single dependency section fails: skip to next dependency section
+            If all dependency sections fail: don't add main section, skip to next main section
+             */
             if (!Schedule.hasConflict(currCourse.getSections(i), copySchedule)) continue;
-            copySchedule.addCourse(new Course(currCourse.getSections(i).getCourse(), currCourse.getSections(i)));
-            generateScheduleHelper(schedules, courses, depth + 1, copySchedule);
+            if (currCourse.getSections(i).hasDependencies()) {
+                for (Section section : currCourse.getSections(i).getDependencies()) {
+                    Course copyCourse = new Course(currCourse, new ArrayList<>(Arrays.asList(currCourse.getSections(i))));
+                    if (!Schedule.hasConflict(section, workingSchedule)) continue;
+                    copyCourse.getSections(0).setDependencies(new ArrayList<>(Arrays.asList(section)));
+                    copySchedule.addCourse(copyCourse);
+                    generateScheduleHelper(schedules, courses, depth + 1, copySchedule);
+                }
+            } else {
+                copySchedule.addCourse(new Course(currCourse, new ArrayList<>(Arrays.asList(currCourse.getSections(i)))));
+                generateScheduleHelper(schedules, courses, depth + 1, copySchedule);
+            }
+
+//            if (currCourse.getSections(i).hasDependencies()) { //generateScheduleHelper(currCourse.getSections(i).getDependencies(), copySchedule);
+//                for (Section section : currCourse.getSections(i).getDependencies()) {
+//                    if (!Schedule.hasConflict(section, workingSchedule)) continue outerLoop;
+//                    workingSchedule.addCourse(new Course(section.getCourse(), new ArrayList<>(Arrays.asList(section))));
+//                }
+//            }
+//            if (!Schedule.hasConflict(currCourse.getSections(i), copySchedule)) continue;
+//            copySchedule.addCourse(new Course(currCourse, new ArrayList<>(Arrays.asList(currCourse.getSections(i)))));
+//            generateScheduleHelper(schedules, courses, depth + 1, copySchedule);
         }
     }
 
-    private static void generateScheduleHelper(ArrayList<Section> sections, Schedule workingSchedule) {
-        for (Section section : sections) {
-            if (!Schedule.hasConflict(section, workingSchedule)) continue;
-            workingSchedule.addCourse(new Course(section.getCourse(), section));
+    private static void generateScheduleHelper(Course course, ArrayList<Section> dependencies, int depth, Schedule workingSchedule) {
+        for (Section section : dependencies) {
+            Schedule copySchedule = new Schedule(workingSchedule);
+            if (Schedule.hasConflict(section, copySchedule)) continue;
+            course.getSections(0).setDependencies(new ArrayList<>(Arrays.asList(section)));
+            copySchedule.addCourse(course);
+            generateScheduleHelper();
         }
     }
+
+//    private static void generateScheduleHelper(ArrayList<Section> sections, Schedule workingSchedule) {
+//        for (Section section : sections) {
+//            if (!Schedule.hasConflict(section, workingSchedule)) continue;
+//            workingSchedule.addCourse(new Course(section.getCourse(), section));
+//        }
+//    }
 
     public static boolean hasConflict(Section section, Schedule workingSchedule) {
 //        if (section.hasDependencies()) {
@@ -76,7 +114,7 @@ public class Schedule {
 //            }
 //        }
 
-        //Dependencies will be handled in generateSchedule
+        // Dependencies will be handled in generateSchedule
 
         for (int i = 0; i < workingSchedule.length(); i++) {
             Course temp = workingSchedule.getCourses(i);

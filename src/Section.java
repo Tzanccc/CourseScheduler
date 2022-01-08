@@ -10,6 +10,7 @@ public class Section {
     public Section(String code, Course course) {
         this.code = code;
         this.course = course;
+        this.times = new ArrayList<>();
         this.hasDependencies = false;
         this.dependencies = new ArrayList<>();
     }
@@ -17,7 +18,16 @@ public class Section {
     public Section(String code, Course course, ArrayList<Section> dependencies) {
         this.code = code;
         this.course = course;
+        this.times = new ArrayList<>();
         this.hasDependencies = true;
+        this.dependencies = dependencies;
+    }
+
+    public Section(Section section, ArrayList<Section> dependencies) {
+        this.code = section.code;
+        this.course = section.course;
+        this.times = section.times;
+        this.hasDependencies = section.hasDependencies;
         this.dependencies = dependencies;
     }
 
@@ -28,6 +38,14 @@ public class Section {
 //        this.hasDependencies = section.hasDependencies;
 //        this.dependencies = section.dependencies;
 //    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
 
     public ArrayList<int[]> getTimes() {
         return times;
@@ -63,6 +81,14 @@ public class Section {
 
     public int getDependenciesLength() {
         return dependencies.size();
+    }
+
+    public void setDependencies(ArrayList<Section> dependencies) {
+        this.dependencies = dependencies;
+    }
+
+    public void addDependencies(Section section) {
+        dependencies.add(section);
     }
 
     public void setCourse(Course course) {
