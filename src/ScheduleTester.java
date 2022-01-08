@@ -49,6 +49,8 @@ public class ScheduleTester {
         assertEquals(3, schedules.size());
         assertEquals("lec001", schedules.get(0).getCourses(0).getSections(0).getCode());
         assertEquals("lec001", schedules.get(0).getCourses(1).getSections(0).getCode());
+        assertEquals("lec001", schedules.get(1).getCourses(0).getSections(0).getCode());
+        assertEquals("lec002", schedules.get(1).getCourses(1).getSections(0).getCode());
         assertEquals("lec002", schedules.get(2).getCourses(0).getSections(0).getCode());
         assertEquals("lec002", schedules.get(2).getCourses(1).getSections(0).getCode());
     }
@@ -70,12 +72,41 @@ public class ScheduleTester {
         math221Section.get(0).setTimes(new ArrayList<int[]>(Arrays.asList(new int[]{1, 1320, 1410}, new int[]{3, 1320, 1410})));
         math221.setSections(math221Section);
 
-        ArrayList<Schedule> schedules = Schedule.generateSchedule(new ArrayList<Course>(Arrays.asList(math221)), new ArrayList<Course>());
-//        assertEquals(1, schedules.size());
-        System.out.println(schedules.size());
-        for (Schedule schedule : schedules) {
-            System.out.println("Schedule " + schedule.length() + "\n" + schedule);
-        }
+        ArrayList<Schedule> schedules = Schedule.generateSchedule(new ArrayList<Course>(Arrays.asList(cs200, math221)), new ArrayList<Course>());
+        assertEquals(1, schedules.size());
+        assertEquals("lab001", schedules.get(0).getCourses(0).getSections(0).getDependencies(0).getCode());
+        assertEquals("dis002", schedules.get(0).getCourses(1).getSections(0).getDependencies(0).getCode());
     }
 
+    @Test
+    public void testTwoCoursesWithBreak() {
+        Course cs200 = new Course("cs200", false);
+        ArrayList<Section> cs200Sections = new ArrayList<>(Arrays.asList(new Section("lec001", cs200), new Section("lec002", cs200), new Section("lec003", cs200)));
+        cs200Sections.get(0).setTimes(new ArrayList<>(Arrays.asList(new int[]{2, 1100, 1215})));
+        cs200Sections.get(1).setTimes(new ArrayList<>(Arrays.asList(new int[]{2, 1430, 1535})));
+        cs200Sections.get(2).setTimes(new ArrayList<>(Arrays.asList(new int[]{4, 800, 915})));
+        cs200.setSections(cs200Sections);
+
+        Course math221 = new Course("math221", false);
+        ArrayList<Section> math221Sections = new ArrayList<>(Arrays.asList(new Section("lec001", math221), new Section("lec002", math221), new Section("lec003", math221)));
+        math221Sections.get(0).setTimes(new ArrayList<>(Arrays.asList(new int[]{3, 1100, 1150})));
+        math221Sections.get(1).setTimes(new ArrayList<>(Arrays.asList(new int[]{1, 1205, 1255})));
+        math221Sections.get(2).setTimes(new ArrayList<>(Arrays.asList(new int[]{2, 1425, 1515})));
+        math221.setSections(math221Sections);
+
+        Course breaktime = new Course("breaktime", true);
+        ArrayList<Section> breaktimeSection = new ArrayList<>(Arrays.asList(new Section("break", breaktime)));
+        breaktimeSection.get(0).setTimes(new ArrayList<>(Arrays.asList(new int[]{1, 1200, 1300}, new int[]{2, 1200, 1300}, new int[]{3, 1200, 1300}, new int[]{4, 1200, 1300}, new int[]{5, 1200, 1300})));
+        breaktime.setSections(breaktimeSection);
+
+        ArrayList<Schedule> schedules = Schedule.generateSchedule(new ArrayList<Course>(Arrays.asList(cs200, math221)), new ArrayList<Course>(Arrays.asList(breaktime)));
+        assertEquals(3, schedules.size());
+        assertEquals("breaktime", schedules.get(0).getCourses(0).getCode());
+        assertEquals("lec002", schedules.get(0).getCourses(1).getSections(0).getCode());
+        assertEquals("lec001", schedules.get(0).getCourses(2).getSections(0).getCode());
+        assertEquals("lec003", schedules.get(1).getCourses(1).getSections(0).getCode());
+        assertEquals("lec001", schedules.get(1).getCourses(2).getSections(0).getCode());
+        assertEquals("lec003", schedules.get(2).getCourses(1).getSections(0).getCode());
+        assertEquals("lec003", schedules.get(2).getCourses(2).getSections(0).getCode());
+    }
 }

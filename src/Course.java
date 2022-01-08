@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Course {
     protected String code;
@@ -17,9 +18,9 @@ public class Course {
         this.isPriority = isPriority;
     }
 
-    public Course(Course course, ArrayList<Section> sections) {
+    public Course(Course course, Section section, Section dependency) {
         this.code = course.code;
-        this.sections = new ArrayList<>(sections);
+        this.sections = new ArrayList<>(Arrays.asList(new Section(section, new ArrayList<>(Arrays.asList(dependency)))));
         this.isPriority = course.isPriority();
     }
 

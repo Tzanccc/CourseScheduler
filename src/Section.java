@@ -100,9 +100,17 @@ public class Section {
     }
 
     public boolean hasConflict(Section other) {
+        if (other.hasDependencies) {
+            for (Section dependency : other.getDependencies()) {
+                if (!hasConflict(dependency)) return false;
+            }
+        }
         for (int i = 0; i < times.size(); i++) {
             for (int j = 0; j < other.getTimesLength(); j++) {
-                if (times.get(i)[0] == other.getTimes(j)[0] && ((times.get(i)[1] <= other.getTimes(j)[1] && other.getTimes(j)[1] <= times.get(i)[2]) || (times.get(i)[1]) <= other.getTimes(j)[2] && other.getTimes(j)[2] <= times.get(i)[2])) return false;
+                if (times.get(i)[0] == other.getTimes(j)[0]) {
+                    if ((times.get(i)[1] <= other.getTimes(j)[1] && other.getTimes(j)[1] <= times.get(i)[2]) || (times.get(i)[1] <= other.getTimes(j)[2] && other.getTimes(j)[2] <= times.get(i)[2])) return false;
+                    if ((other.getTimes(j)[1] <= times.get(i)[1] && times.get(i)[1] <= other.getTimes(j)[2]) || (other.getTimes(j)[1] <= times.get(i)[2] && times.get(i)[2] <= other.getTimes(j)[2])) return false;
+                }
             }
         }
         return true;
