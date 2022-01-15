@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/CourseScheduler/static/css/main.5740cf87.css",
+    "main.js": "/CourseScheduler/static/js/main.dfcc725a.js",
+    "static/js/787.c39012cf.chunk.js": "/CourseScheduler/static/js/787.c39012cf.chunk.js",
+    "index.html": "/CourseScheduler/index.html",
+    "main.5740cf87.css.map": "/CourseScheduler/static/css/main.5740cf87.css.map",
+    "main.dfcc725a.js.map": "/CourseScheduler/static/js/main.dfcc725a.js.map",
+    "787.c39012cf.chunk.js.map": "/CourseScheduler/static/js/787.c39012cf.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.5740cf87.css",
+    "static/js/main.dfcc725a.js"
+  ]
+}
