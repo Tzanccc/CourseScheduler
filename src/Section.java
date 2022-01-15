@@ -121,30 +121,54 @@ public class Section {
         for (int[] time : times) {
             switch (time[0]) {
                 case 1:
-                    s += "Monday";
+                    s += "Monday ";
                     break;
                 case 2:
-                    s += "Tuesday";
+                    s += "Tuesday ";
                     break;
                 case 3:
-                    s += "Wednesday";
+                    s += "Wednesday ";
                     break;
                 case 4:
-                    s += "Thursday";
+                    s += "Thursday ";
                     break;
                 case 5:
-                    s += "Friday";
+                    s += "Friday ";
                     break;
                 case 6:
-                    s += "Saturday";
+                    s += "Saturday ";
                     break;
                 case 7:
-                    s += "Sunday";
+                    s += "Sunday ";
                     break;
                 default:
-                    s += "Error: invalid day";
+                    s += "Error: invalid day ";
             }
-            s += " " + time[1]/100 + ":" + time[1]%100 + " - " + time[2]/100 + ":" + time[2]%100 + "\n";
+
+            if (time[1]/100 < 10) {
+                s += "0" + time[1]/100;
+            } else {
+                s += time[1]/100;
+            }
+            s += ":";
+            if (time[1]%100 < 10) {
+                s += "0" + time[1]%100;
+            } else {
+                s += time[1]%100;
+            }
+            s += " - ";
+            if (time[2]/100 < 10) {
+                s += "0" + time[2]/100;
+            } else {
+                s += time[2]/100;
+            }
+            s += ":";
+            if (time[2]%100 < 10) {
+                s += "0" + time[2]%100;
+            } else {
+                s += time[2]%100;
+            }
+            s += "\n";
         }
         if (hasDependencies) {
             for (Section dependency : dependencies) {
